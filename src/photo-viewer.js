@@ -7,7 +7,7 @@ export const MODE_CONTENT = {
   COVER: 'cover',
 }
 
-const clamp = (num, min, max) => (num <= min ? min : num >= max ? max : num);
+const clamp = (num, min, max) => (num <= min ? min : num >= max ? max : num)
 
 class ZenPhotoViewer extends LitElement {
   static get properties () {
@@ -55,14 +55,14 @@ class ZenPhotoViewer extends LitElement {
     this.rotationIndex = 0
     this.src = ''
     this.mode = MODE_CONTENT.CONTAIN
-    this.panPos = { x: 0, y: 0 };
+    this.panPos = { x: 0, y: 0 }
 
     this.__loaded = false
-    this.__dragging = false;
+    this.__dragging = false
     this.__ctx = null
 
-    this.__startPanPos = { x: 0, y: 0 };
-    this.__startMousePos = { x: 0, y: 0 };
+    this.__startPanPos = { x: 0, y: 0 }
+    this.__startMousePos = { x: 0, y: 0 }
     this.__image = new Image()
     this.__image.onload = () => {
       this.__loaded = true
@@ -99,7 +99,7 @@ class ZenPhotoViewer extends LitElement {
             this.panPos.y !== this.__startPanPos.y) {
             this.reportImage()
           }
-  
+
           this.__startMousePos = { x: 0, y: 0 }
           this.__startPanPos = { ...this.panPos }
           this.__dragging = false
@@ -109,9 +109,7 @@ class ZenPhotoViewer extends LitElement {
         e.preventDefault()
 
         if (this.__loaded && this.__dragging) {
-          const ext = this.getMaxExtents()
           const currentPos = this.getMousePosition(e)
-
           const mouseOffset = {
             x: currentPos.x - this.__startMousePos.x,
             y: currentPos.y - this.__startMousePos.y,
@@ -128,7 +126,7 @@ class ZenPhotoViewer extends LitElement {
     }
   }
 
-  connectedCallback() {
+  connectedCallback () {
     super.connectedCallback()
 
     document.addEventListener('mouseup', this.__handlers.dragEnd)
@@ -137,7 +135,7 @@ class ZenPhotoViewer extends LitElement {
     document.addEventListener('touchmove', this.__handlers.dragMove)
   }
 
-  disconnectedCallback() {
+  disconnectedCallback () {
     super.disconnectedCallback()
 
     document.removeEventListener('mouseup', this.__handlers.dragEnd)
@@ -173,13 +171,20 @@ class ZenPhotoViewer extends LitElement {
     this.__ctx.restore()
   }
 
+  constrain () {
+    const result = this.getConstrainedPanPos(this.panPos)
+
+    if (result.x !== this.panPos.x || result.y !== this.panPos.y) {
+      this.onChange(result)
+    }
+  }
+
   reportImage () {
-    console.log('HERE')
     const data = this.__elements.canvas.toDataURL('image/jpeg')
     this.onCapture(data)
   }
 
-  getAngle() {
+  getAngle () {
     return -this.rotationIndex * Math.PI / 2
   }
 
@@ -194,7 +199,7 @@ class ZenPhotoViewer extends LitElement {
     return rotated ? height / width : width / height
   }
 
-  getImageScale() {
+  getImageScale () {
     const rotated = this.rotationIndex % 2
     const canvasAspect = this.getCanvasAspect()
     const imageAspect = this.getImageAspect()
@@ -264,26 +269,28 @@ class ZenPhotoViewer extends LitElement {
 
     this.__ctx = this.__elements.canvas.getContext('2d')
     this.__handlers.animate()
-    
-    this.panPos = this.getConstrainedPanPos(this.panPos)
+
+    this.constrain()
+    this.reportImage()
   }
 
   update (changedProps) {
     if (changedProps.has('src')) {
-      this.__image.src = this.src
-
       this.__loaded = false
-      this.__dragging = false;
-      this.__startPanPos = { x: 0, y: 0 };
-      this.__startMousePos = { x: 0, y: 0 };
+      this.__dragging = false
+      this.__image.src = this.src
+      this.__startPanPos = { x: 0, y: 0 }
+      this.__startMousePos = { x: 0, y: 0 }
     }
 
-    if (changedProps.has('zoom') && this.__elements) {
-      this.reportImage()
-    }
+    if (this.__elements) {
+      if (changedProps.has('zoom')) {
+        this.reportImage()
+      }
 
-    if (changedProps.has('panPos') && this.__elements) {
-      this.panPos = this.getConstrainedPanPos(this.panPos)
+      if (changedProps.has('panPos')) {
+        this.constrain()
+      }
     }
 
     super.update(changedProps)

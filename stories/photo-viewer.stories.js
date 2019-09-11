@@ -1,7 +1,7 @@
 import { MODE_CONTENT } from '../src/photo-viewer'
 
 import { storiesOf } from '@open-wc/demoing-storybook'
-import { withKnobs, number, object, select } from '@storybook/addon-knobs'
+import { withKnobs, number, object, select, files } from '@storybook/addon-knobs'
 import { html, css } from 'lit-element'
 
 import { IMG_PORTRAIT, IMG_LANDSCAPE } from './_resources'
@@ -26,6 +26,10 @@ function genCanvasStyles () {
   const width = number('Canvas Width', 400, OPTS_RANGE_CANVAS)
   const height = number('Canvas Height', 300, OPTS_RANGE_CANVAS)
   return css`width: ${width}px; height: ${height}px;`
+}
+
+function genPhotoSrc () {
+  return files('Photo', 'image/jpeg, image/png')[0] || IMG_PORTRAIT
 }
 
 const stories = storiesOf('Photo Viewer', module)
@@ -104,7 +108,7 @@ stories.add('Configurable', () =>
     <zen-photo-viewer
       style="${genCanvasStyles()}"
       .mode="${select('Mode', MODE_CONTENT, MODE_CONTENT.CONTAIN)}"
-      .src="${IMG_PORTRAIT}"
+      .src="${genPhotoSrc()}"
       .zoom="${number('Zoom', 1, OPTS_RANGE_ZOOM)}"
       .panPos="${object('Pan', { x: 0, y: 0 })}"
     ></zen-photo-viewer>
