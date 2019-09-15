@@ -36,10 +36,15 @@ const PAN_COORDS = {
   y: 32,
 }
 
+```
+
+Cover Mode Usage
+```js
 const change = src => console.log('viewport src:', src)
 
 ... html`
   <zen-photo-viewer
+    style="width: 400px; height: 300px;"
     .mode="${MODE_CONTENT.COVER)}"
     .src="${IMG_SRC_PORTRAIT}"
     .zoom="${ZOOM}"
@@ -48,3 +53,23 @@ const change = src => console.log('viewport src:', src)
   ></zen-photo-viewer>
 `
 ```
+
+![alt text](./docs/cover.png "Cover Mode")
+
+Contain Mode Usage
+```js
+const change = src => console.log('viewport src:', src)
+
+... html`
+  <zen-photo-viewer
+    style="width: 400px; height: 300px;"
+    .mode="${MODE_CONTENT.COVER)}"
+    .src="${IMG_SRC_PORTRAIT}"
+    .zoom="${ZOOM}"
+    .panPos="${PAN_COORDS}"
+    .onChange="${change}"
+  ></zen-photo-viewer>
+`
+```
+
+![alt text](./docs/contain.png "Contain Mode")
