@@ -22,6 +22,8 @@ const OPTS_RANGE_ZOOM = {
   step: 0.01,
 }
 
+const capture = src => console.info('src:', src)
+
 function genCanvasStyles () {
   const width = number('Canvas Width', 400, OPTS_RANGE_CANVAS)
   const height = number('Canvas Height', 300, OPTS_RANGE_CANVAS)
@@ -111,6 +113,7 @@ stories.add('Configurable', () =>
       .src="${genPhotoSrc()}"
       .zoom="${number('Zoom', 1, OPTS_RANGE_ZOOM)}"
       .panPos="${object('Pan', { x: 0, y: 0 })}"
+      .onCapture="${capture}"
     ></zen-photo-viewer>
   `,
 )

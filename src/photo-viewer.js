@@ -59,6 +59,7 @@ class ZenPhotoViewer extends LitElement {
 
     this.__loaded = false
     this.__dragging = false
+    this.__canReport = false
     this.__ctx = null
 
     this.__startPanPos = { x: 0, y: 0 }
@@ -70,6 +71,8 @@ class ZenPhotoViewer extends LitElement {
 
     this.onChange = () => {}
     this.onCapture = () => {}
+
+    setInterval(() => (this.__canReport = true), 1000)
   }
 
   __initHandlers () {
@@ -81,6 +84,13 @@ class ZenPhotoViewer extends LitElement {
 
         if (this.__loaded) {
           this.draw()
+        }
+
+        if (this.__canReport) {
+          const data = this.__elements.canvas.toDataURL('image/jpeg')
+          this.onCapture(data)
+
+          this.__canReport = false
         }
 
         requestAnimationFrame(this.__handlers.animate)
@@ -97,7 +107,7 @@ class ZenPhotoViewer extends LitElement {
           if (
             this.panPos.x !== this.__startPanPos.x ||
             this.panPos.y !== this.__startPanPos.y) {
-            this.reportImage()
+            this.__canReport = true
           }
 
           this.__startMousePos = { x: 0, y: 0 }
@@ -177,11 +187,6 @@ class ZenPhotoViewer extends LitElement {
     if (result.x !== this.panPos.x || result.y !== this.panPos.y) {
       this.onChange(result)
     }
-  }
-
-  reportImage () {
-    const data = this.__elements.canvas.toDataURL('image/jpeg')
-    this.onCapture(data)
   }
 
   getAngle () {
@@ -271,7 +276,7 @@ class ZenPhotoViewer extends LitElement {
     this.__handlers.animate()
 
     this.constrain()
-    this.reportImage()
+    requestAnimationFrame(() => (this.__canReport = true))
   }
 
   update (changedProps) {
@@ -285,7 +290,7 @@ class ZenPhotoViewer extends LitElement {
 
     if (this.__elements) {
       if (changedProps.has('zoom')) {
-        this.reportImage()
+        this.__canReport = true
       }
 
       if (changedProps.has('panPos')) {
