@@ -114,6 +114,7 @@ stories.add('Configurable', () =>
       .zoom="${number('Zoom', 1, OPTS_RANGE_ZOOM)}"
       .panPos="${object('Pan', { x: 0, y: 0 })}"
       .onCapture="${capture}"
+      capture
     ></zen-photo-viewer>
   `,
 )

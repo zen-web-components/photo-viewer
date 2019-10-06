@@ -19,6 +19,10 @@ class ZenPhotoViewer extends LitElement {
       src: String,
       mode: String,
       panPos: Object,
+      capture: {
+        reflect: true,
+        type: Boolean,
+      },
     }
   }
 
@@ -51,6 +55,7 @@ class ZenPhotoViewer extends LitElement {
   }
 
   __initState () {
+    this.capture = false
     this.zoom = 1
     this.rotationIndex = 0
     this.src = ''
@@ -64,10 +69,9 @@ class ZenPhotoViewer extends LitElement {
 
     this.__startPanPos = { x: 0, y: 0 }
     this.__startMousePos = { x: 0, y: 0 }
+
     this.__image = new Image()
-    this.__image.onload = () => {
-      this.__loaded = true
-    }
+    this.__image.onload = () => this.__handlers.load()
 
     this.onChange = () => {}
     this.onCapture = () => {}
@@ -75,22 +79,13 @@ class ZenPhotoViewer extends LitElement {
 
   __initHandlers () {
     this.__handlers = {
+      load: () => {
+        this.__loaded = true
+        this.__canReport = true
+        this.constrain()
+      },
       animate: () => {
-        const canvasEl = this.__elements.canvas
-        canvasEl.width = canvasEl.clientWidth
-        canvasEl.height = canvasEl.clientHeight
-
-        if (this.__loaded) {
-          this.draw()
-        }
-
-        if (this.__canReport) {
-          const data = this.__elements.canvas.toDataURL('image/jpeg')
-          this.onCapture(data)
-
-          this.__canReport = false
-        }
-
+        this.draw()
         requestAnimationFrame(this.__handlers.animate)
       },
       dragStart: e => {
@@ -153,30 +148,44 @@ class ZenPhotoViewer extends LitElement {
   }
 
   draw () {
-    const canvasWidth = this.__elements.canvas.clientWidth
-    const canvasHeight = this.__elements.canvas.clientHeight
+    const canvasEl = this.__elements.canvas
+    const canvasWidth = canvasEl.clientWidth
+    const canvasHeight = canvasEl.clientHeight
     const imageWidth = this.__image.width
     const imageHeight = this.__image.height
 
+    canvasEl.width = canvasEl.clientWidth
+    canvasEl.height = canvasEl.clientHeight
+
     this.__ctx.save()
     this.__ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-    this.__ctx.translate(
-      (canvasWidth / 2) + this.panPos.x,
-      (canvasHeight / 2) + this.panPos.y
-    )
 
-    this.__ctx.scale(this.getImageScale(), this.getImageScale())
-    this.__ctx.rotate(this.getAngle())
-    this.__ctx.scale(this.zoom, this.zoom)
-    this.__ctx.drawImage(
-      this.__image,
-      -imageWidth / 2,
-      -imageHeight / 2,
-      imageWidth,
-      imageHeight,
-    )
+    if (this.__loaded) {
+      this.__ctx.translate(
+        (canvasWidth / 2) + this.panPos.x,
+        (canvasHeight / 2) + this.panPos.y
+      )
+
+      this.__ctx.scale(this.getImageScale(), this.getImageScale())
+      this.__ctx.rotate(this.getAngle())
+      this.__ctx.scale(this.zoom, this.zoom)
+      this.__ctx.drawImage(
+        this.__image,
+        -imageWidth / 2,
+        -imageHeight / 2,
+        imageWidth,
+        imageHeight,
+      )
+    }
 
     this.__ctx.restore()
+
+    if (this.capture && this.__loaded && this.__canReport) {
+      const data = this.__elements.canvas.toDataURL('image/jpeg')
+      this.onCapture(data)
+
+      this.__canReport = false
+    }
   }
 
   constrain () {
@@ -274,7 +283,6 @@ class ZenPhotoViewer extends LitElement {
     this.__handlers.animate()
 
     this.constrain()
-    requestAnimationFrame(() => (this.__canReport = true))
   }
 
   update (changedProps) {
