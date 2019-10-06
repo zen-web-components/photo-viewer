@@ -1,4 +1,6 @@
+/.storybook
 /examples
+/stories
 /test
 
 .eslintrc.js

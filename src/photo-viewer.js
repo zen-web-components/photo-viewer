@@ -19,10 +19,6 @@ class ZenPhotoViewer extends LitElement {
       src: String,
       mode: String,
       panPos: Object,
-      capture: {
-        reflect: true,
-        type: Boolean,
-      },
     }
   }
 
@@ -55,7 +51,6 @@ class ZenPhotoViewer extends LitElement {
   }
 
   __initState () {
-    this.capture = false
     this.zoom = 1
     this.rotationIndex = 0
     this.src = ''
@@ -74,7 +69,7 @@ class ZenPhotoViewer extends LitElement {
     this.__image.onload = () => this.__handlers.load()
 
     this.onChange = () => {}
-    this.onCapture = () => {}
+    this.onCapture = null
   }
 
   __initHandlers () {
@@ -180,7 +175,7 @@ class ZenPhotoViewer extends LitElement {
 
     this.__ctx.restore()
 
-    if (this.capture && this.__loaded && this.__canReport) {
+    if (this.onCapture && this.__loaded && this.__canReport) {
       const data = this.__elements.canvas.toDataURL('image/jpeg')
       this.onCapture(data)
 
@@ -295,7 +290,13 @@ class ZenPhotoViewer extends LitElement {
     }
 
     if (this.__elements) {
+      if (changedProps.has('mode')) {
+        this.constrain()
+        this.__canReport = true
+      }
+
       if (changedProps.has('zoom')) {
+        this.constrain()
         this.__canReport = true
       }
 

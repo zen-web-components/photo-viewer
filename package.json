@@ -1,6 +1,6 @@
 {
   "name": "@zensen/photo-viewer",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "license": "MIT",
   "description": "A photo viewer component for LitElement",
   "main": "src/photo-viewer.js",
