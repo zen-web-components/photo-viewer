@@ -71,8 +71,6 @@ class ZenPhotoViewer extends LitElement {
 
     this.onChange = () => {}
     this.onCapture = () => {}
-
-    setInterval(() => (this.__canReport = true), 1000)
   }
 
   __initHandlers () {
