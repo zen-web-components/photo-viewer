@@ -1,4 +1,4 @@
-# zensen-photo-viewer
+# @zen-web-components/photo-viewer
 
 A photo viewer component for LitElement.
 
@@ -13,13 +13,13 @@ A photo viewer component for LitElement.
 Using `npm`:
 
 ```
-$ npm install @zensen/photo-viewer
+$ npm install @zen-web-components/photo-viewer
 ```
 
 Using `yarn`:
 
 ```
-$ yarn add @zensen/photo-viewer
+$ yarn add @zen-web-components/photo-viewer
 ```
 
 ## API
@@ -27,7 +27,7 @@ $ yarn add @zensen/photo-viewer
 ```js
 import { IMG_SRC_PORTRAIT } from './_resources'
 
-import { MODE_CONTENT } from '@zensen/photo-viewer'
+import { MODE_CONTENT } from '@zen-web-components/photo-viewer'
 
 const ZOOM = 1.5
 

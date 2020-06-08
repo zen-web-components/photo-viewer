@@ -1,10 +1,16 @@
-import { fixture, expect } from '@open-wc/testing'
-
 import '../src/photo-viewer'
 
-describe('zen-photo-viewer', () => {
-  it('renders', () =>
-    expect(
-      fixture('<zen-photo-viewer></zen-photo-viewer>')
-    ).to.eventually.exist)
+import { _sinon, expect, genSuite } from '@zen-web-components/unit-test-helper'
+
+genSuite('zen-photo-viewer', false, {
+  onStart: _meta => {
+  },
+}, meta => {
+  context('when...', () => {
+    beforeEach(async () => {
+      await meta.updateComplete()
+    })
+
+    it('passes', () => expect(true).to.be.true)
+  })
 })
